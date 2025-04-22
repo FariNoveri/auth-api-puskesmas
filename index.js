@@ -7,7 +7,7 @@ require('dotenv').config();
 // Middleware untuk parsing JSON
 app.use(express.json());
 
-// Routing
+// Routing All
 app.use('/api/users', userRoutes);   // GET/POST ke /api/users
 app.use('/api/gudang', gudangRoutes); // GET/POST ke /api/gudang
 
