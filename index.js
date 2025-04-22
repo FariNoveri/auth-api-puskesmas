@@ -1,27 +1,16 @@
-const db = require('./config/db');
+const express = require('express');
+const app = express();
+const userRoutes = require('./routes/userRoutes'); // Mengimpor router
+require('dotenv').config();
 
-// Route ambil semua users
-app.get('/api/users', async (req, res) => {
-  try {
-    const result = await db.query('SELECT * FROM m_users');
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error fetching users:', err);
-    res.status(500).json({ error: 'Database error' });
-  }
-});
+// Middleware untuk parsing JSON
+app.use(express.json());
 
-// Route tambah user
-app.post('/api/users', async (req, res) => {
-  const { nama_user, email, password } = req.body;
-  try {
-    const result = await db.query(
-      'INSERT INTO m_users (nama_user, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [nama_user, email, password]
-    );
-    res.status(201).json({ message: 'User created', user: result.rows[0] });
-  } catch (err) {
-    console.error('Error creating user:', err);
-    res.status(500).json({ error: 'Database error' });
-  }
+// Menyambungkan router ke aplikasi Express
+app.use('/api/users', userRoutes); // Menggunakan userRoutes untuk API /api/users
+
+// Menjalankan server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
