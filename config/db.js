@@ -3,7 +3,7 @@ const { Pool } = require('pg');
 const pool = new Pool({
   host: 'localhost',      // ganti kalau database host beda
   user: 'postgres',       // default user PostgreSQL
-  password: '220903', // ganti dengan passwordmu
+  password: '123', // ganti dengan passwordmu
   database: 'puskesmas',
   port: 5432              // default port PostgreSQL
 });
