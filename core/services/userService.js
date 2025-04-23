@@ -8,7 +8,7 @@ const getAllUsers = async () => {
     const result = await db.query(`
       SELECT 
         u.id,
-        u.name,
+        u.name, 
         u.username,
         u.email,
         u.email_verified_at,
