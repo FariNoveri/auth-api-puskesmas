@@ -27,8 +27,8 @@ const getUnitLayananById = async (id) => {
 
 // Fungsi untuk membuat unit layanan baru
 const createUnitLayanan = async (data) => {
-  const { unit_layanan, keterangan } = data;
   try {
+    const { unit_layanan, keterangan } = data;
     const result = await db.query(
       `INSERT INTO m_unit_layanan (unit_layanan, keterangan, created_at, updated_at)
        VALUES ($1, $2, NOW(), NOW()) RETURNING *`,
@@ -36,8 +36,8 @@ const createUnitLayanan = async (data) => {
     );
     return result.rows[0];
   } catch (err) {
-    console.error(err); // Menambah logging error untuk debugging
-    throw new Error(`Error creating unit layanan: ${err.message}`);
+    console.error("CREATE UNIT LAYANAN ERROR:", err); // <== tambahin ini
+    throw new Error("Error creating unit layanan");
   }
 };
 
