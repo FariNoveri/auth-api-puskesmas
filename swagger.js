@@ -1,14 +1,15 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
+
 // Setup Swagger config
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API Rumah Sakit',
+      title: 'API Puskesmas',
       version: '1.0.0',
-      description: 'YNTKTS', // Deskripsi API kamu
+      description: 'testing api puskesmas', // Deskripsi API kamu
     },
     servers: [
       {
