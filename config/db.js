@@ -10,7 +10,7 @@ const pool = new Pool({
 
 // Tes koneksi
 pool.connect()
-  .then(() => console.log('Connected to PostgreSQL Database (rs2025).'))
+  .then(() => console.log('Connected to PostgreSQL Database (Puskesmas).'))
   .catch((err) => console.error('Connection error', err.stack));
 
 module.exports = pool;
