@@ -72,7 +72,7 @@ exports.getObatById = async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ObatInput'
+ *             $ref: '#/components/schemas/ObatInputCreate'
  *     responses:
  *       201:
  *         description: Obat berhasil ditambahkan
@@ -109,7 +109,7 @@ exports.createObat = async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ObatInput'
+ *             $ref: '#/components/schemas/ObatInputUpdate'
  *     responses:
  *       200:
  *         description: Obat berhasil diperbarui
@@ -177,7 +177,7 @@ exports.deleteObat = async (req, res) => {
  * @swagger
  * components:
  *   schemas:
- *     ObatInput:
+ *     ObatInputCreate:
  *       type: object
  *       required:
  *         - nama_obat
@@ -196,6 +196,26 @@ exports.deleteObat = async (req, res) => {
  *         created_by:
  *           type: string
  *           example: admin
+ *         updated_by:
+ *           type: string
+ *           example: admin
+ *
+ *     ObatInputUpdate:
+ *       type: object
+ *       required:
+ *         - nama_obat
+ *         - satuan_id
+ *         - updated_by
+ *       properties:
+ *         nama_obat:
+ *           type: string
+ *           example: Amoxicillin
+ *         satuan_id:
+ *           type: integer
+ *           example: 1
+ *         keterangan:
+ *           type: string
+ *           example: Antibiotik
  *         updated_by:
  *           type: string
  *           example: admin
