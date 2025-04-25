@@ -36,7 +36,7 @@ exports.createSatuanObat = async (req, res) => {
        VALUES ($1, $2, $3, $3, NOW(), NOW()) RETURNING *`,
       [nama_satuan, keterangan, created_by]
     );
-    return successResponse(res, 'Satuan obat berhasil ditambahkan', result.rows[0]);
+    return successResponse(res, 'Satuan obat berhasil ditambahkan', result.rows[0], 201);
   } catch (error) {
     console.error(error);
     return errorResponse(res, 'Gagal menambahkan satuan obat');

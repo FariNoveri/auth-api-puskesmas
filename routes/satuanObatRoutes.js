@@ -1,4 +1,3 @@
-// routes/satuanObatRoutes.js
 const express = require('express');
 const router = express.Router();
 const satuanObatController = require('../controllers/satuanObatController');
@@ -28,8 +27,20 @@ const satuanObatController = require('../controllers/satuanObatController');
  *                 properties:
  *                   id:
  *                     type: integer
- *                   nama:
+ *                   nama_satuan:
  *                     type: string
+ *                   keterangan:
+ *                     type: string
+ *                   created_by:
+ *                     type: integer
+ *                   updated_by:
+ *                     type: integer
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                   updated_at:
+ *                     type: string
+ *                     format: date-time
  */
 router.get('/', satuanObatController.getAllSatuanObat);
 
@@ -45,9 +56,33 @@ router.get('/', satuanObatController.getAllSatuanObat);
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID satuan obat
  *     responses:
  *       200:
- *         description: Data berhasil ditemukan
+ *         description: Data satuan obat ditemukan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 nama_satuan:
+ *                   type: string
+ *                 keterangan:
+ *                   type: string
+ *                 created_by:
+ *                   type: integer
+ *                 updated_by:
+ *                   type: integer
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                 updated_at:
+ *                   type: string
+ *                   format: date-time
+ *       404:
+ *         description: Satuan obat tidak ditemukan
  */
 router.get('/:id', satuanObatController.getSatuanObatById);
 
@@ -64,11 +99,47 @@ router.get('/:id', satuanObatController.getSatuanObatById);
  *           schema:
  *             type: object
  *             properties:
- *               nama:
+ *               nama_satuan:
  *                 type: string
+ *                 description: Nama satuan obat
+ *               keterangan:
+ *                 type: string
+ *                 description: Keterangan tambahan untuk satuan obat
+ *               created_by:
+ *                 type: integer
+ *                 description: ID pengguna yang membuat data
+ *             required:
+ *               - nama_satuan
+ *               - created_by
  *     responses:
  *       201:
- *         description: Data berhasil ditambahkan
+ *         description: Satuan obat berhasil ditambahkan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     nama_satuan:
+ *                       type: string
+ *                     keterangan:
+ *                       type: string
+ *                     created_by:
+ *                       type: integer
+ *                     updated_by:
+ *                       type: integer
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *                     updated_at:
+ *                       type: string
+ *                       format: date-time
  */
 router.post('/', satuanObatController.createSatuanObat);
 
@@ -84,6 +155,7 @@ router.post('/', satuanObatController.createSatuanObat);
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID satuan obat yang akan diupdate
  *     requestBody:
  *       required: true
  *       content:
@@ -91,11 +163,49 @@ router.post('/', satuanObatController.createSatuanObat);
  *           schema:
  *             type: object
  *             properties:
- *               nama:
+ *               nama_satuan:
  *                 type: string
+ *                 description: Nama satuan obat yang baru
+ *               keterangan:
+ *                 type: string
+ *                 description: Keterangan tambahan untuk satuan obat
+ *               updated_by:
+ *                 type: integer
+ *                 description: ID pengguna yang melakukan update
+ *             required:
+ *               - nama_satuan
+ *               - updated_by
  *     responses:
  *       200:
- *         description: Data berhasil diupdate
+ *         description: Satuan obat berhasil diupdate
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     nama_satuan:
+ *                       type: string
+ *                     keterangan:
+ *                       type: string
+ *                     created_by:
+ *                       type: integer
+ *                     updated_by:
+ *                       type: integer
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *                     updated_at:
+ *                       type: string
+ *                       format: date-time
+ *       404:
+ *         description: Satuan obat tidak ditemukan
  */
 router.put('/:id', satuanObatController.updateSatuanObat);
 
@@ -111,9 +221,12 @@ router.put('/:id', satuanObatController.updateSatuanObat);
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID satuan obat yang akan dihapus
  *     responses:
  *       200:
- *         description: Data berhasil dihapus
+ *         description: Satuan obat berhasil dihapus
+ *       404:
+ *         description: Satuan obat tidak ditemukan
  */
 router.delete('/:id', satuanObatController.deleteSatuanObat);
 
