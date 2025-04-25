@@ -1,7 +1,23 @@
 const pool = require('../config/db');
-const { successResponse, errorResponse } = require('../utils/responseFormat'); // asumsi file ini di folder utils
+const { successResponse, errorResponse } = require('../utils/responseFormat');
 
-// GET semua data obat
+/**
+ * @swagger
+ * tags:
+ *   name: Obat
+ *   description: API untuk manajemen Obat
+ */
+
+/**
+ * @swagger
+ * /obat:
+ *   get:
+ *     summary: Mengambil semua data obat
+ *     tags: [Obat]
+ *     responses:
+ *       200:
+ *         description: Data obat berhasil diambil
+ */
 exports.getAllObat = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM m_obat');
@@ -12,7 +28,25 @@ exports.getAllObat = async (req, res) => {
   }
 };
 
-// GET obat berdasarkan ID
+/**
+ * @swagger
+ * /obat/{id}:
+ *   get:
+ *     summary: Mengambil detail obat berdasarkan ID
+ *     tags: [Obat]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID obat
+ *     responses:
+ *       200:
+ *         description: Data obat ditemukan
+ *       404:
+ *         description: Obat tidak ditemukan
+ */
 exports.getObatById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -27,7 +61,22 @@ exports.getObatById = async (req, res) => {
   }
 };
 
-// POST - tambah obat
+/**
+ * @swagger
+ * /obat:
+ *   post:
+ *     summary: Menambahkan obat baru
+ *     tags: [Obat]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ObatInput'
+ *     responses:
+ *       201:
+ *         description: Obat berhasil ditambahkan
+ */
 exports.createObat = async (req, res) => {
   const { nama_obat, satuan_id, keterangan, created_by } = req.body;
   try {
@@ -43,7 +92,30 @@ exports.createObat = async (req, res) => {
   }
 };
 
-// PUT - update obat
+/**
+ * @swagger
+ * /obat/{id}:
+ *   put:
+ *     summary: Memperbarui data obat berdasarkan ID
+ *     tags: [Obat]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ObatInput'
+ *     responses:
+ *       200:
+ *         description: Obat berhasil diperbarui
+ *       404:
+ *         description: Obat tidak ditemukan
+ */
 exports.updateObat = async (req, res) => {
   const { id } = req.params;
   const { nama_obat, satuan_id, keterangan, updated_by } = req.body;
@@ -66,7 +138,24 @@ exports.updateObat = async (req, res) => {
   }
 };
 
-// DELETE - hapus obat
+/**
+ * @swagger
+ * /obat/{id}:
+ *   delete:
+ *     summary: Menghapus data obat berdasarkan ID
+ *     tags: [Obat]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Obat berhasil dihapus
+ *       404:
+ *         description: Obat tidak ditemukan
+ */
 exports.deleteObat = async (req, res) => {
   const { id } = req.params;
 
@@ -83,3 +172,31 @@ exports.deleteObat = async (req, res) => {
     return errorResponse(res, 'Gagal menghapus obat');
   }
 };
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ObatInput:
+ *       type: object
+ *       required:
+ *         - nama_obat
+ *         - satuan_id
+ *         - created_by
+ *       properties:
+ *         nama_obat:
+ *           type: string
+ *           example: Paracetamol
+ *         satuan_id:
+ *           type: integer
+ *           example: 1
+ *         keterangan:
+ *           type: string
+ *           example: Obat untuk menurunkan demam
+ *         created_by:
+ *           type: string
+ *           example: admin
+ *         updated_by:
+ *           type: string
+ *           example: admin
+ */
