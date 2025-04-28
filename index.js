@@ -9,6 +9,7 @@ const unitLayananRoutes = require("./routes/unitLayananRoutes"); // Route unit l
 const satuanObatRoutes = require("./routes/satuanObatRoutes"); // Route satuan obat
 const gudangRoutes = require("./routes/gudangRoutes"); // Route gudang
 const obatRoutes = require("./routes/obatRoutes"); // ✅ Route obat
+const orderRoutes = require("./routes/orderRoutes");
 
 // Middleware parsing JSON
 app.use(express.json());
@@ -22,6 +23,7 @@ app.use("/unit-layanan", unitLayananRoutes);
 app.use("/satuan-obat", satuanObatRoutes);
 app.use("/gudang", gudangRoutes);
 app.use("/obat", obatRoutes); // ✅ Tambah route Obat
+app.use("/orders", orderRoutes);
 
 // Cek server hidup
 app.get("/api/hello", (req, res) => {

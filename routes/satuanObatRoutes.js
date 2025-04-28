@@ -225,7 +225,7 @@ router.put('/:id', satuanObatController.updateSatuanObat);
  *     responses:
  *       200:
  *         description: Satuan obat berhasil dihapus
- *       404:
+ *       404:           
  *         description: Satuan obat tidak ditemukan
  */
 router.delete('/:id', satuanObatController.deleteSatuanObat);
