@@ -1,103 +1,169 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-# APIRUMAHSAKIT
 
+# API Puskesmas
 
+Selamat datang di **API Puskesmas**! Ini adalah sebuah API yang digunakan untuk mengelola data di Puskesmas, seperti data pengguna (dokter, staf, pasien), obat-obatan, serta unit layanan. Tujuan utama dari API ini adalah untuk mempermudah manajemen data dengan menggunakan teknologi yang modern dan efisien.
 
-## Getting started
+![Illyasviel Happy](https://media.tenor.com/P1R3ZsFFle0AAAAM/prillya-fate.gif)  
+_Illyasviel yang bahagia bisa membantu kamu!_
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Fitur Utama
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- **Manajemen Pengguna**  
+  API ini memungkinkan untuk menambah, mengubah, dan menghapus data pengguna seperti dokter dan staf di Puskesmas. Dengan autentikasi berbasis token, hanya pengguna yang terverifikasi yang bisa mengakses data ini.
+  
+  ![Illyasviel Excited](https://media.tenor.com/qpqxihUeHjkAAAAM/anime-jap-cute.gif)  
+  _Illyasviel sangat senang kalau kamu bisa mengelola data pengguna dengan mudah!_
 
-## Add your files
+- **Autentikasi dan Otorisasi**  
+  API ini menggunakan JWT (JSON Web Tokens) untuk autentikasi. Setiap kali pengguna login, mereka akan mendapatkan **access token** yang berlaku selama 15 menit, dan **refresh token** yang bisa digunakan untuk mendapatkan access token baru setelah expired.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+  ![Illyasviel Thoughtful](https://media.tenor.com/71ILzl80dSkAAAAM/illya-illyasviel.gif)  
+  _Illyasviel merenung tentang pentingnya autentikasi yang aman._
+
+- **Manajemen Data Obat dan Unit Layanan**  
+  API ini juga menyediakan fitur untuk mengelola data obat dan unit layanan. Dengan begitu, staf Puskesmas dapat dengan mudah menambahkan dan memperbarui data terkait obat dan layanan yang ada.
+  
+  ![Illyasviel Surprised](https://media.tenor.com/bM45G7gVOEcAAAAm/prisma-illya-yell.webp)  
+  _Illyasviel terkejut betapa mudahnya kamu bisa mengelola obat dan unit layanan!_
+
+## Persiapan Awal
+
+### Langkah 1: Clone Repository
+
+Clone repository ini ke komputer kamu dengan perintah berikut di terminal atau command prompt:
+
+```bash
+git clone https://github.com/FariNoveri/auth-api-puskesmas.git
+```
+
+![Illyasviel Surprised Again](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmkybW84cndmaTV4YmViZHk0Z3d4NjBzdjNzOW1pOG14NHp6ZDRjYiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/T9qJa0lfRjXsQ/200.webp)  
+_Illyasviel akan terkejut melihat kamu sudah meng-clone repositori ini!_
+
+### Langkah 2: Install Dependencies
+
+Setelah kamu clone repositori, masuk ke dalam folder proyek dan install semua dependencies yang diperlukan dengan perintah:
+
+```bash
+cd auth-api-puskesmas
+npm install
+```
+
+![Illyasviel Cheerful](https://media.tenor.com/KJAzTiRnJ7MAAAAm/prisma-illya-flattered.webp)  
+_Illyasviel dengan penuh semangat melihat kamu siap menjalankan proyek ini!_
+
+### Langkah 3: Setup File `.env`
+
+Buat file `.env` di root folder proyek ini, dan masukkan informasi yang diperlukan seperti database dan JWT secrets. Berikut contoh konten file `.env`:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=passwordmu
+DB_NAME=puskesmas
+PORT=3000
+ACCESS_TOKEN_SECRET=yourAccessTokenSecret
+REFRESH_TOKEN_SECRET=yourRefreshTokenSecret
+JWT_SECRET=rahasia_super_aman_123
+```
+
+![Illyasviel Winking](https://media.tenor.com/5lIyWxyKKYYAAAAM/irisviel-von-einzbern-fate-zero.gif)  
+_Illyasviel memberi isyarat wink karena kamu sudah mengatur environment variable dengan baik!_
+
+### Langkah 4: Menjalankan Proyek
+
+Sekarang kamu siap untuk menjalankan API Puskesmas! Cukup jalankan perintah berikut:
+
+```bash
+node index.js
+```
+
+Atau jika kamu ingin menggunakan `server.js`:
+
+```bash
+node server.js
+```
+
+API ini akan berjalan di `http://localhost:3000`. Kamu bisa mengaksesnya untuk mengelola data Puskesmas.
+
+![Illyasviel Excited](https://media.tenor.com/CSs44vFqSMMAAAAM/illya-anime-girl.gif)  
+_Illyasviel sangat senang kamu sudah berhasil menjalankan API ini!_
+
+## Pengujian API dengan Thunder Client
+
+Untuk menguji API kamu, kamu bisa menggunakan **Thunder Client**, yang merupakan alat testing API di Visual Studio Code. 
+
+Berikut adalah cara menggunakannya:
+
+1. **Install Thunder Client**  
+   Di Visual Studio Code, buka Extensions (Ctrl+Shift+X), cari "Thunder Client" dan klik **Install**.
+
+2. **Menguji API**  
+   - Setelah Thunder Client terinstal, buka tab Thunder Client dan pilih **New Request**.
+   - Pilih metode HTTP yang sesuai (GET, POST, PUT, DELETE), masukkan URL `http://localhost:3000/`, dan klik **Send**.
+
+3. **Menguji Autentikasi**  
+   Untuk endpoint yang membutuhkan autentikasi, kamu perlu menambahkan token di header **Authorization** dengan format:  
+   `Bearer <access_token>`.
+
+![Illyasviel Thinking](https://media.tenor.com/uWwlkE0PSpMAAAAM/illya-kaleid.gif)  
+_Illyasviel sedang berpikir, tapi dia senang kamu tahu cara menggunakan Thunder Client!_
+
+## Struktur Folder
+
+Berikut adalah penjelasan mengenai struktur folder dalam proyek ini:
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/pt-microdata/APIRUMAHSAKIT.git
-git branch -M main
-git push -uf origin main
+/config
+  ├── db.js         // Koneksi ke database PostgreSQL
+  └── puskesmas.sql  // Script SQL untuk setup database
+
+/controllers
+  ├── gudangController.js    // Mengatur data gudang
+  └── userController.js      // Mengatur data pengguna
+
+/core
+  ├── services
+      └── userService.js     // Mengatur logika untuk pengguna
+
+/middleware
+  ├── authenticateToken.js   // Middleware untuk autentikasi token
+
+/routes
+  ├── userRoutes.js          // Mengatur routing untuk API pengguna
+
+/utils
+  └── responseFormat.js      // Membantu format response API
+
 ```
 
-## Integrate with your tools
+![Illyasviel Smiling](https://media.tenor.com/1m9mLbU-apgAAAAm/fate-liner-kaleid-liner.webp)  
+_Illyasviel tersenyum melihat struktur folder yang rapi dan terorganisir dengan baik!_
 
-- [ ] [Set up project integrations](https://gitlab.com/pt-microdata/APIRUMAHSAKIT/-/settings/integrations)
+## Error yang Sering Terjadi
 
-## Collaborate with your team
+Jika kamu mengalami error, berikut adalah beberapa yang umum dan cara memperbaikinya:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+1. **Error "Database Connection Failed"**
+   - Pastikan file `.env` sudah diatur dengan benar dan database sudah berjalan.
 
-## Test and Deploy
+2. **Error "JWT Expired"**
+   - Jika access token sudah kadaluarsa, kamu bisa menggunakan refresh token untuk mendapatkan access token baru.
 
-Use the built-in continuous integration in GitLab.
+3. **Error "Cannot Find Module"**
+   - Cek apakah kamu sudah menjalankan `npm install` untuk menginstal semua dependencies.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+![Illyasviel Facepalm](https://media.tenor.com/iW1Z-jLqwRwAAAAM/illya-illyasviel.gif)  
+_Illyasviel menghela napas karena kamu bisa mengatasi error dengan mudah!_
 
-***
+## Penutup
 
-# Editing this README
+Terima kasih sudah menggunakan **API Puskesmas**! Semoga API ini bermanfaat untuk mempermudah pengelolaan data di Puskesmas. Jangan lupa, selalu pastikan kamu mengikuti langkah-langkah di atas dengan teliti.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+![Illyasviel Happy](https://media.tenor.com/rJ-rakodgh0AAAAM/illya-illyasviel.gif)  
+_Illyasviel sangat bangga melihat kamu menyelesaikan semuanya dengan baik!_
 
-## Suggestions for a good README
+---
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
-=======
-# user-api-puskesmas
-API untuk manajemen pengguna di Puskesmas, memungkinkan operasi seperti pendaftaran, login, verifikasi email, dan pengelolaan data pengguna. Dibangun menggunakan Express.js dan Swagger untuk dokumentasi API.
->>>>>>> 8e6fa9d2ecc56ef1ddcd4c62bec4f1de3d04702c
-=======
-# auth-api-puskesmas
-RESTful API untuk sistem autentikasi dan manajemen pengguna di aplikasi Puskesmas. Termasuk login, refresh token, verifikasi email, dan CRUD user. Dibangun dengan Node.js, Express, dan PostgreSQL.
->>>>>>> 352de8b3df02b0eeb9d7b7336d2637a01fd3900d
+*Fari Noveri dan Illyasviel von Einzbern mencintai satu sama lain dan berharap kamu juga menyukai proyek ini.*  
+*Selamat mencoba, dan semoga sukses!*
