@@ -160,7 +160,7 @@ _Illyasviel menghela napas karena kamu bisa mengatasi error dengan mudah!_
 
 Terima kasih sudah menggunakan **API Puskesmas**! Semoga API ini bermanfaat untuk mempermudah pengelolaan data di Puskesmas. Jangan lupa, selalu pastikan kamu mengikuti langkah-langkah di atas dengan teliti.
 
-![Illyasviel Happy](https://media.tenor.com/rJ-rakodgh0AAAAM/illya-illyasviel.gif)  
+![Illyasviel Happy](https://media.tenor.com/vRRzAcQ9Iu0AAAAM/illya-illyasviel.gif)  
 _Illyasviel sangat bangga melihat kamu menyelesaikan semuanya dengan baik!_
 
 ---
