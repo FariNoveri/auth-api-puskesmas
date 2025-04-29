@@ -1,16 +1,16 @@
 // controllers/userController.js
-const userService = require('../core/services/userService');
-const { successResponse, errorResponse } = require('../utils/responseFormat');
-const bcrypt = require('bcrypt');  // Untuk hashing password
+const userService = require("../core/services/userService");
+const { successResponse, errorResponse } = require("../utils/responseFormat");
+const bcrypt = require("bcrypt");
 
 // Fungsi untuk mendapatkan semua users
 const getAllUsersController = async (req, res) => {
   try {
     const users = await userService.getAllUsers();
-    successResponse(res, 'Users fetched successfully', users);
+    return successResponse(res, "Users fetched successfully", users);
   } catch (err) {
-    console.error(err);  // Menambahkan log untuk error
-    errorResponse(res, 'Error fetching users');
+    console.error(err);
+    return errorResponse(res, err.message || "Error fetching users");
   }
 };
 
@@ -18,33 +18,59 @@ const getAllUsersController = async (req, res) => {
 const createUserController = async (req, res) => {
   const { name, username, email, password, unit_layanan_id, foto } = req.body;
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);  // Hash password sebelum menyimpannya
-    const newUser = await userService.createUser({ name, username, email, password: hashedPassword, unit_layanan_id, foto });
-    successResponse(res, 'User created successfully', newUser);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await userService.createUser({
+      name,
+      username,
+      email,
+      password: hashedPassword,
+      unit_layanan_id,
+      foto,
+    });
+    return successResponse(res, "User created successfully", newUser);
   } catch (err) {
-    console.error(err);  // Menambahkan log untuk error
-    errorResponse(res, 'Error creating user');
+    console.error(err);
+    return errorResponse(res, err.message || "Error creating user");
   }
 };
 
 // Fungsi untuk memperbarui user
 const updateUserController = async (req, res) => {
-  const userId = req.params.userId;
-  const { name, username, email, password, unit_layanan_id, foto, remember_token } = req.body;
+  const { userId } = req.params;
+  const {
+    name,
+    username,
+    email,
+    password,
+    unit_layanan_id,
+    foto,
+    remember_token,
+  } = req.body;
+
   try {
+    let hashedPassword = password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
     const updatedUser = await userService.updateUser(userId, {
       name,
       username,
       email,
-      password, // Pastikan password di-hash jika diubah
+      password: hashedPassword,
       unit_layanan_id,
       foto,
       remember_token,
     });
-    successResponse(res, 'User updated successfully', updatedUser);
+
+    if (!updatedUser) {
+      return errorResponse(res, "User not found or update failed");
+    }
+
+    return successResponse(res, "User updated successfully", updatedUser);
   } catch (err) {
-    console.error(err);  // Menambahkan log untuk error
-    errorResponse(res, 'Error updating user');
+    console.error(err);
+    return errorResponse(res, err.message || "Error updating user");
   }
 };
 
@@ -53,37 +79,71 @@ const verifyEmailController = async (req, res) => {
   const { userId } = req.params;
   try {
     const updatedUser = await userService.verifyEmail(userId);
-    successResponse(res, 'Email verified successfully', updatedUser);
+
+    if (!updatedUser) {
+      return errorResponse(res, "User not found or email verification failed");
+    }
+
+    return successResponse(res, "Email verified successfully", updatedUser);
   } catch (err) {
-    console.error(err);  // Menambahkan log untuk error
-    errorResponse(res, 'Error verifying email');
+    console.error(err);
+    return errorResponse(res, err.message || "Error verifying email");
   }
 };
 
 // Fungsi untuk login dan menghasilkan remember token
+// Fungsi untuk login dan menghasilkan remember token
 const loginController = async (req, res) => {
   const { username, password } = req.body;
+
   try {
     const user = await userService.getUserByUsername(username);
+
+    console.log(user);
+
     if (!user) {
-      return errorResponse(res, 'User not found');
+      return res.status(401).json({
+        status: "error",
+        message: "Invalid credentialhgjgjs",
+        data: null,
+      });
     }
 
-    // Bandingkan password yang diberikan dengan yang sudah di-hash
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return errorResponse(res, 'Invalid credentials');
+      return res.status(401).json({
+        status: "error",
+        message: "Invalid credentials jos",
+        data: null,
+      });
     }
 
     const rememberToken = userService.generateRememberToken(user);
     await userService.updateRememberToken(user.id, rememberToken);
 
-    successResponse(res, 'Login successful', { remember_token: rememberToken });
+    return res.status(200).json({
+      status: "success",
+      message: "Login successful",
+      data: {
+        remember_token: rememberToken,
+        user: {
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          email: user.email,
+        },
+      },
+    });
   } catch (err) {
-    console.error(err);  // Menambahkan log untuk error
-    errorResponse(res, 'Login failed');
+    console.error("Login error:", err);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+      data: null,
+    });
   }
 };
+
 
 module.exports = {
   getAllUsersController,
