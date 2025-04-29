@@ -1,24 +1,38 @@
+require('dotenv').config(); 
 const express = require("express");
 const app = express();
-const userRoutes = require("./routes/userRoutes"); // Mengimpor router untuk user
-const unitLayananRoutes = require("./routes/unitLayananRoutes"); // Mengimpor router untuk unit layanan
-const gudangRoutes = require('./routes/gudangRoutes'); // Router untuk gudang
-const obatRoutes = require('./routes/obatRoutes'); // Mengimpor router untuk obat
-const satuanObatRoutes = require('./routes/satuanObatRoutes'); // Router satuan obat
-require("dotenv").config(); // Memuat variabel lingkungan
 
-// Middleware untuk parsing JSON
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger"); // Swagger config
+
+const userRoutes = require("./routes/userRoutes"); // Route pengguna
+const unitLayananRoutes = require("./routes/unitLayananRoutes"); // Route unit layanan
+const satuanObatRoutes = require("./routes/satuanObatRoutes"); // Route satuan obat
+const gudangRoutes = require("./routes/gudangRoutes"); // Route gudang
+const obatRoutes = require("./routes/obatRoutes"); // ✅ Route obat
+const orderRoutes = require("./routes/orderRoutes");
+
+// Middleware parsing JSON
 app.use(express.json());
 
-// Menyambungkan router ke aplikasi Express
-app.use("/api/users", userRoutes); // Menggunakan userRoutes untuk API /api/users
-app.use("/api/unit-layanan", unitLayananRoutes); // Menggunakan unitLayananRoutes untuk API /api/unit-layanan
-app.use("/api/gudang", gudangRoutes); // Menggunakan gudangRoutes untuk API /api/gudang
-app.use('/api/obat', obatRoutes); // Menggunakan obatRoutes untuk API /api/obat
-app.use('/api/satuan_obat', satuanObatRoutes); // Menggunakan satuanObatRoutes untuk API /api/satuan_obat
+// Swagger Docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Menjalankan server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// API Routes
+app.use("/users", userRoutes);
+app.use("/unit-layanan", unitLayananRoutes);
+app.use("/satuan-obat", satuanObatRoutes);
+app.use("/gudang", gudangRoutes);
+app.use("/obat", obatRoutes); // ✅ Tambah route Obat
+app.use("/orders", orderRoutes);
+
+// Cek server hidup
+app.get("/api/hello", (req, res) => {
+  res.send("Hello World");
+});
+
+// Jalankan server
+app.listen(3001, () => {
+  console.log("Server running at http://localhost:3001");
+  console.log("Swagger docs at http://localhost:3001/api-docs");
 });

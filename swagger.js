@@ -1,24 +1,23 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
-// Setup Swagger config
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API Rumah Sakit',
+      title: 'API Puskesmas',
       version: '1.0.0',
-      description: 'YNTKTS', // Deskripsi API kamu
+      description: 'testing api puskesmas',
     },
     servers: [
       {
-        url: 'http://localhost:3001', // Ganti dengan port yang digunakan di server.js
+        url: 'http://localhost:3001',
       },
     ],
   },
-  apis: ['./routes/*.js'], // File yang mau dibaca dokumentasinya
+  apis: ['./routes/*.js', './controllers/*.js'], // ✅ Tambahkan ini!
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-module.exports = swaggerSpec; // Export swaggerSpec untuk digunakan di server.js
+module.exports = swaggerSpec;

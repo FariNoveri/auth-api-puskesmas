@@ -18,7 +18,7 @@ const createObat = async ({ nama_obat, jenis_obat, gudang_id, stok, tanggal_kada
     VALUES 
       ($1, $2, $3, $4, $5, $6, $7, $8)
     RETURNING *;
-  `;
+  `;  
   
   const result = await db.query(query, [
     nama_obat, jenis_obat, gudang_id, stok, tanggal_kadaluarsa, 

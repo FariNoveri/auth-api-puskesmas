@@ -45,7 +45,73 @@ const createGudang = async (req, res) => {
   }
 };
 
+// Fungsi untuk mengambil gudang berdasarkan ID
+const getGudangById = async (req, res) => {
+  const { gudangId } = req.params;
+  try {
+    const gudang = await gudangService.getGudangById(gudangId);
+    if (gudang) {
+      return successResponse(res, 'Gudang retrieved successfully', gudang);
+    } else {
+      return errorResponse(res, 'Gudang not found', null);
+    }
+  } catch (err) {
+    console.error('Error fetching gudang by ID:', err);
+    return errorResponse(res, 'Database error', null);
+  }
+};
+
+// Fungsi untuk memperbarui data gudang
+const updateGudang = async (req, res) => {
+  const { gudangId } = req.params;
+  const { kode_gudang, nama_gudang, lokasi, keterangan, updated_by } = req.body;
+  const updated_at = new Date(); // Timestamp saat update
+
+  try {
+    // Validasi input
+    if (!kode_gudang || !nama_gudang || !lokasi) {
+      return errorResponse(res, 'Missing required fields', null);
+    }
+
+    const updatedGudang = await gudangService.updateGudang(gudangId, {
+      kode_gudang,
+      nama_gudang,
+      lokasi,
+      keterangan,
+      updated_by,
+      updated_at,
+    });
+
+    if (updatedGudang) {
+      return successResponse(res, 'Gudang updated successfully', updatedGudang);
+    } else {
+      return errorResponse(res, 'Gudang not found or not updated', null);
+    }
+  } catch (err) {
+    console.error('Error updating gudang:', err);
+    return errorResponse(res, 'Database error', null);
+  }
+};
+// Fungsi untuk menghapus gudang
+const deleteGudang = async (req, res) => {
+  const { gudangId } = req.params;
+  try {
+    const deleted = await gudangService.deleteGudang(gudangId);
+    if (deleted) {
+      return successResponse(res, 'Gudang deleted successfully', null);
+    } else {
+      return errorResponse(res, 'Gudang not found or not deleted', null);
+    }
+  } catch (err) {
+    console.error('Error deleting gudang:', err);
+    return errorResponse(res, 'Database error', null);
+  }
+};
+
 module.exports = {
   getAllGudang,
   createGudang,
+  getGudangById,
+  updateGudang,
+  deleteGudang,
 };

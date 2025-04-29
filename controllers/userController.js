@@ -1,18 +1,18 @@
 // controllers/userController.js
+
 const userService = require('../core/services/userService');
 const { successResponse, errorResponse } = require('../utils/responseFormat');
 const bcrypt = require('bcrypt');  // Untuk hashing password
 const jwt = require('jsonwebtoken');
-const { generateAccessToken, generateRefreshToken } = require('../core/services/userService');
 
 // Fungsi untuk mendapatkan semua users
 const getAllUsersController = async (req, res) => {
   try {
     const users = await userService.getAllUsers();
-    successResponse(res, 'Users fetched successfully', users);
+    return successResponse(res, "Users fetched successfully", users);
   } catch (err) {
-    console.error(err);  // Menambahkan log untuk error
-    errorResponse(res, 'Error fetching users');
+    console.error(err);
+    return errorResponse(res, err.message || "Error fetching users");
   }
 };
 
@@ -20,42 +20,53 @@ const createUserController = async (req, res) => {
   const { name, username, email, password, unit_layanan_id, foto } = req.body;
 
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await userService.createUser({
       name,
       username,
       email,
-      password, // ✅ Sekarang tidak error
+      password: hashedPassword, // Menggunakan hashedPassword
       unit_layanan_id,
       foto
     });
 
-    successResponse(res, 'User created successfully', newUser);
+    return successResponse(res, 'User created successfully', newUser);
   } catch (err) {
-    console.error('Create user error:', err); // 👈 Tambahkan log error yang detail
-    errorResponse(res, 'Error creating user');
+    console.error('Create user error:', err);
+    return errorResponse(res, 'Error creating user');
   }
 };
 
-
 // Fungsi untuk memperbarui user
 const updateUserController = async (req, res) => {
-  const userId = req.params.userId;
+  const { userId } = req.params;
   const { name, username, email, password, unit_layanan_id, foto, remember_token } = req.body;
+
   try {
+    let hashedPassword = password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
     const updatedUser = await userService.updateUser(userId, {
       name,
       username,
       email,
-      password, // Pastikan password di-hash jika diubah
+      password: hashedPassword,
       unit_layanan_id,
       foto,
       remember_token,
     });
-    successResponse(res, 'User updated successfully', updatedUser);
+
+    if (!updatedUser) {
+      return errorResponse(res, "User not found or update failed");
+    }
+
+    return successResponse(res, "User updated successfully", updatedUser);
   } catch (err) {
-    console.error(err);  // Menambahkan log untuk error
-    errorResponse(res, 'Error updating user');
+    console.error(err);
+    return errorResponse(res, err.message || "Error updating user");
   }
 };
 
@@ -64,11 +75,15 @@ const verifyEmailController = async (req, res) => {
   const { userId } = req.params;
   try {
     const updatedUser = await userService.verifyEmail(userId);
-    successResponse(res, 'Email verified successfully', updatedUser);
+
+    if (!updatedUser) {
+      return errorResponse(res, "User not found or email verification failed");
+    }
+
+    return successResponse(res, "Email verified successfully", updatedUser);
   } catch (err) {
-    console.error(err);  // Menambahkan log untuk error
-    errorResponse(res, 'Error verifying email');
-    console.log('Verifying refresh token:', refreshToken);
+    console.error(err);  
+    return errorResponse(res, 'Error verifying email');
   }
 };
 
@@ -78,9 +93,11 @@ const loginController = async (req, res) => {
 
   try {
     const user = await userService.getUserByUsername(username);
+
     if (!user) return errorResponse(res, 'User not found');
 
-    if (password !== user.password) {
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
       return errorResponse(res, 'Invalid credentials');
     }
 
@@ -95,7 +112,7 @@ const loginController = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    errorResponse(res, 'Login failed');
+    return errorResponse(res, 'Login failed');
   }
 };
 
@@ -112,6 +129,7 @@ const logoutController = async (req, res) => {
   }
 };
 
+// Fungsi untuk reset password
 const resetPasswordController = async (req, res) => {
   const { username, newPassword } = req.body;
 
@@ -119,7 +137,8 @@ const resetPasswordController = async (req, res) => {
     const user = await userService.getUserByUsername(username);
     if (!user) return errorResponse(res, 'User not found');
 
-    await userService.updatePassword(user.id, newPassword);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await userService.updatePassword(user.id, hashedPassword);
 
     successResponse(res, 'Password reset successfully');
   } catch (err) {
@@ -128,6 +147,7 @@ const resetPasswordController = async (req, res) => {
   }
 };
 
+// Fungsi untuk refresh token
 const refreshTokenController = async (req, res) => {
   const { refreshToken } = req.body;
 
@@ -136,7 +156,6 @@ const refreshTokenController = async (req, res) => {
   }
 
   try {
-    console.log('Received refresh token:', refreshToken);  // Log token for debugging
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);  // Check for expired/invalid token
     const user = await userService.getUserById(decoded.id); // Get user based on ID in token
 
@@ -146,13 +165,13 @@ const refreshTokenController = async (req, res) => {
 
     const newAccessToken = jwt.sign(
       { id: user.id, username: user.username },
-      process.env.ACCESS_TOKEN_SECRET,  // Make sure the correct secret is used here
+      process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: '15m' }
     );
 
     successResponse(res, 'Access token refreshed', { access_token: newAccessToken });
   } catch (err) {
-    console.error('Error during token verification:', err.message);  // More detailed logging
+    console.error('Error during token verification:', err.message);
     if (err.name === 'TokenExpiredError') {
       return errorResponse(res, 'Refresh token expired');
     }
@@ -177,8 +196,6 @@ const profileController = async (req, res) => {
     errorResponse(res, 'Error fetching profile');
   }
 };
-
-
 
 module.exports = {
   getAllUsersController,

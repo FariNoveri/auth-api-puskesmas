@@ -1,6 +1,5 @@
-// services/userService.js
 const db = require('../../config/db');
-const jwt = require('jsonwebtoken'); // Tadi lupa, ini perlu di-import
+const jwt = require('jsonwebtoken'); // Ini perlu di-import
 
 // Fungsi untuk mendapatkan semua user
 const getAllUsers = async () => {
@@ -27,41 +26,38 @@ const getAllUsers = async () => {
     `);
     return result.rows;
   } catch (err) {
-    throw new Error('Error fetching users');
+    console.error('Error fetching all users:', err);
+    throw err;
   }
 };
-
 
 // Fungsi untuk mendapatkan user berdasarkan username
 const getUserByUsername = async (username) => {
   try {
-    const result = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+    const result = await db.query(
+      'SELECT * FROM users WHERE username = $1', 
+      [username]
+    );
     return result.rows[0];
   } catch (err) {
-    throw new Error('Error fetching user');
+    console.error('Error fetching user by username:', err);
+    throw err;
   }
 };
 
 // Fungsi untuk membuat user baru
 const createUser = async (userData) => {
   try {
-    const {
-      name,
-      username,
-      email,
-      password,
-      unit_layanan_id,
-      foto,
-    } = userData;
+    const { name, username, email, password, unit_layanan_id, foto } = userData;
 
     const result = await db.query(
       `INSERT INTO users (name, username, email, password, unit_layanan_id, foto, created_at, updated_at) 
-      VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *`,
+       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *`,
       [name, username, email, password, unit_layanan_id, foto]
     );
     return result.rows[0];
   } catch (err) {
-    console.error('DB Error:', err); // tambahkan ini
+    console.error('DB Error:', err); // Menambahkan log untuk debugging
     throw new Error('Error creating user');
   }
 };
@@ -69,32 +65,25 @@ const createUser = async (userData) => {
 // Fungsi untuk memperbarui user berdasarkan ID
 const updateUser = async (userId, userData) => {
   try {
-    const {
-      name,
-      username,
-      email,
-      password,
-      unit_layanan_id,
-      foto,
-      remember_token,
-    } = userData;
+    const { name, username, email, password, unit_layanan_id, foto, remember_token } = userData;
 
     const result = await db.query(
       `UPDATE users SET 
-        name = $1, 
-        username = $2, 
-        email = $3, 
-        password = $4, 
-        unit_layanan_id = $5, 
-        foto = $6, 
-        remember_token = $7, 
-        updated_at = NOW() 
-      WHERE id = $8 RETURNING *`,
+         name = $1, 
+         username = $2, 
+         email = $3, 
+         password = $4, 
+         unit_layanan_id = $5, 
+         foto = $6, 
+         remember_token = $7, 
+         updated_at = NOW() 
+       WHERE id = $8 RETURNING *`,
       [name, username, email, password, unit_layanan_id, foto, remember_token, userId]
     );
     return result.rows[0];
   } catch (err) {
-    throw new Error('Error updating user');
+    console.error('Error updating user:', err);
+    throw err;
   }
 };
 
@@ -106,8 +95,9 @@ const verifyEmail = async (userId) => {
       [userId]
     );
     return result.rows[0];
-  } catch (error) {
-    throw new Error('Error verifying email');
+  } catch (err) {
+    console.error('Error verifying email:', err);
+    throw err;
   }
 };
 
@@ -120,22 +110,20 @@ const updateRememberToken = async (userId, token) => {
     );
     console.log('Updating remember_token for ID:', userId, 'with token:', token);
     return result.rows[0];
-  } catch (error) {
-    console.error('Error updating remember token:', error);  // Menambahkan log error untuk debugging
+  } catch (err) {
+    console.error('Error updating remember token:', err);
     throw new Error('Error updating remember token');
   }
 };
 
-
 // Fungsi untuk menghasilkan remember token
 const generateRememberToken = (user) => {
   return jwt.sign(
-    { id: user.id, username: user.username },  // <-- ini payloadnya
+    { id: user.id, username: user.username }, // Payload
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: '7d' }
+    { expiresIn: '7d' } // Refresh token berlaku 7 hari
   );
 };
-
 
 // Fungsi untuk menghasilkan access token
 const generateAccessToken = (user) => {
@@ -151,11 +139,11 @@ const generateRefreshToken = (user) => {
   return jwt.sign(
     { id: user.id, username: user.username },
     process.env.REFRESH_TOKEN_SECRET,  // Mengambil nilai dari .env
-    { algorithm: 'HS256', expiresIn: '7d' },
     { expiresIn: '7d' }  // Refresh token berlaku 7 hari
   );
 };
 
+// Fungsi untuk memperbarui password
 const updatePassword = async (userId, newPassword) => {
   try {
     const result = await db.query(
@@ -164,6 +152,7 @@ const updatePassword = async (userId, newPassword) => {
     );
     return result.rows[0];
   } catch (err) {
+    console.error('Error updating password:', err);
     throw new Error('Error updating password');
   }
 };
@@ -174,16 +163,16 @@ const getUserById = async (id) => {
     const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
     return result.rows[0]; // Mengembalikan data user berdasarkan ID
   } catch (err) {
+    console.error('Error fetching user by ID:', err);
     throw new Error('Error fetching user by ID');
   }
 };
-
 
 module.exports = {
   getAllUsers,
   getUserByUsername,
   createUser,
-  getUserById,  // <-- Add this line
+  getUserById,
   updateUser,
   verifyEmail,
   updateRememberToken,

@@ -1,10 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const userController = require('../controllers/userController');
 const authMiddleware = require('../middleware/authMiddleware');  // Mengimpor middleware
 const authenticateToken = require('../middleware/authenticateToken');
 const { profileController } = require('../controllers/userController');
-
 
 /**
  * @swagger
@@ -37,7 +36,7 @@ const { profileController } = require('../controllers/userController');
  *                   items:
  *                     type: object
  */
-router.get('/', userController.getAllUsersController);
+router.get("/", userController.getAllUsersController);
 
 /**
  * @swagger
@@ -68,14 +67,14 @@ router.get('/', userController.getAllUsersController);
  *               password:
  *                 type: string
  *               unit_layanan_id:
- *                 type: string
+ *                 type: integer
  *               foto:
  *                 type: string
  *     responses:
  *       201:
  *         description: User created successfully
  */
-router.post('/', userController.createUserController);
+router.post("/", userController.createUserController);
 
 /**
  * @swagger
@@ -107,7 +106,7 @@ router.post('/', userController.createUserController);
  *               password:
  *                 type: string
  *               unit_layanan_id:
- *                 type: string
+ *                 type: integer
  *               foto:
  *                 type: string
  *               remember_token:
@@ -116,7 +115,7 @@ router.post('/', userController.createUserController);
  *       200:
  *         description: User updated successfully
  */
-router.put('/:userId', userController.updateUserController);
+router.put("/:userId", userController.updateUserController);
 
 /**
  * @swagger
@@ -136,7 +135,7 @@ router.put('/:userId', userController.updateUserController);
  *       200:
  *         description: Email verified successfully
  */
-router.patch('/verify-email/:userId', userController.verifyEmailController);
+router.patch("/verify-email/:userId", userController.verifyEmailController);
 
 /**
  * @swagger
@@ -162,6 +161,20 @@ router.patch('/verify-email/:userId', userController.verifyEmailController);
  *     responses:
  *       200:
  *         description: User logged in successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     remember_token:
+ *                       type: string
  */
 
 /**
@@ -239,15 +252,12 @@ router.post('/refresh-token', userController.refreshTokenController);
 router.post('/login', userController.loginController);
 
 // Route untuk akses data user (menggunakan middleware)
-//router.get('/profile', authMiddleware, userController.profileController);
+router.get('/profile', authenticateToken, profileController);
 
 // Logout
 router.post('/logout', userController.logoutController);
 
 // Reset password
 router.post('/reset-password', userController.resetPasswordController);
-
-
-router.get('/profile', authenticateToken, profileController);
 
 module.exports = router;

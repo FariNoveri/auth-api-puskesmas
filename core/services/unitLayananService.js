@@ -1,4 +1,3 @@
-// services/unitLayananService.js
 const db = require("../../config/db");
 
 // Fungsi untuk mendapatkan semua unit layanan
@@ -7,7 +6,8 @@ const getAllUnitLayanan = async () => {
     const result = await db.query("SELECT * FROM m_unit_layanan");
     return result.rows;
   } catch (err) {
-    throw new Error("Error fetching unit layanan");
+    console.error(err); // Menambah logging error untuk debugging
+    throw new Error(`Error fetching unit layanan: ${err.message}`);
   }
 };
 
@@ -15,9 +15,13 @@ const getAllUnitLayanan = async () => {
 const getUnitLayananById = async (id) => {
   try {
     const result = await db.query("SELECT * FROM m_unit_layanan WHERE id = $1", [id]);
+    if (result.rows.length === 0) {
+      throw new Error(`Unit layanan with ID ${id} not found`);
+    }
     return result.rows[0];
   } catch (err) {
-    throw new Error("Error fetching unit layanan by ID");
+    console.error(err); // Menambah logging error untuk debugging
+    throw new Error(`Error fetching unit layanan by ID: ${err.message}`);
   }
 };
 
@@ -32,23 +36,28 @@ const createUnitLayanan = async (data) => {
     );
     return result.rows[0];
   } catch (err) {
+    console.error("CREATE UNIT LAYANAN ERROR:", err); // <== tambahin ini
     throw new Error("Error creating unit layanan");
   }
 };
 
 // Fungsi untuk memperbarui unit layanan
 const updateUnitLayanan = async (id, data) => {
+  const { unit_layanan, keterangan } = data;
   try {
-    const { unit_layanan, keterangan } = data;
     const result = await db.query(
       `UPDATE m_unit_layanan 
        SET unit_layanan = $1, keterangan = $2, updated_at = NOW()
        WHERE id = $3 RETURNING *`,
       [unit_layanan, keterangan, id]
     );
+    if (result.rows.length === 0) {
+      throw new Error(`Unit layanan with ID ${id} not found`);
+    }
     return result.rows[0];
   } catch (err) {
-    throw new Error("Error updating unit layanan");
+    console.error(err); // Menambah logging error untuk debugging
+    throw new Error(`Error updating unit layanan: ${err.message}`);
   }
 };
 
@@ -56,9 +65,13 @@ const updateUnitLayanan = async (id, data) => {
 const deleteUnitLayanan = async (id) => {
   try {
     const result = await db.query("DELETE FROM m_unit_layanan WHERE id = $1 RETURNING *", [id]);
-    return result.rows[0];
+    if (result.rows.length === 0) {
+      return null; // Tidak ada data yang dihapus
+    }
+    return result.rows[0]; // Mengembalikan data yang dihapus
   } catch (err) {
-    throw new Error("Error deleting unit layanan");
+    console.error(err); // Menambah logging error untuk debugging
+    throw new Error(`Error deleting unit layanan: ${err.message}`);
   }
 };
 
