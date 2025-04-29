@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # APIRUMAHSAKIT
 
 
@@ -96,3 +97,7 @@ If you have run out of energy or time for your project, put a note at the top of
 # user-api-puskesmas
 API untuk manajemen pengguna di Puskesmas, memungkinkan operasi seperti pendaftaran, login, verifikasi email, dan pengelolaan data pengguna. Dibangun menggunakan Express.js dan Swagger untuk dokumentasi API.
 >>>>>>> 8e6fa9d2ecc56ef1ddcd4c62bec4f1de3d04702c
+=======
+# auth-api-puskesmas
+RESTful API untuk sistem autentikasi dan manajemen pengguna di aplikasi Puskesmas. Termasuk login, refresh token, verifikasi email, dan CRUD user. Dibangun dengan Node.js, Express, dan PostgreSQL.
+>>>>>>> 352de8b3df02b0eeb9d7b7336d2637a01fd3900d
