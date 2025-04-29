@@ -136,7 +136,13 @@ Made By Fari Noveri
 
 /core
 └── services
-    └── userService.js       # Berisi logika untuk manajemen pengguna (misalnya, pembuatan, penghapusan)
+    ├── gudangService.js     # Logika untuk manajemen gudang
+    ├── obatService.js       # Logika untuk manajemen data obat
+    ├── orderService.js      # Logika untuk manajemen pesanan
+    ├── roleModel.js         # Model untuk manajemen role pengguna
+    ├── satuanObatService.js # Logika untuk manajemen satuan obat
+    ├── unitLayananService.js # Logika untuk manajemen unit layanan
+    └── userService.js       # Logika untuk manajemen data pengguna (misalnya, pembuatan, penghapusan)
 
 /middleware
 ├── authenticateToken.js     # Middleware untuk autentikasi token JWT di rute yang dilindungi
