@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const authMiddleware = require('../middleware/authMiddleware');  // Mengimpor middleware
+const authenticateToken = require('../middleware/authenticateToken');
+const { profileController } = require('../controllers/userController');
+
 
 /**
  * @swagger
@@ -140,7 +144,7 @@ router.patch('/verify-email/:userId', userController.verifyEmailController);
  *   post:
  *     summary: User login
  *     tags: [Users]
- *     description: Authenticate user and generate remember token
+ *     description: Authenticate user and generate access and refresh tokens
  *     requestBody:
  *       required: true
  *       content:
@@ -159,6 +163,91 @@ router.patch('/verify-email/:userId', userController.verifyEmailController);
  *       200:
  *         description: User logged in successfully
  */
+
+/**
+ * @swagger
+ * /users/logout:
+ *   post:
+ *     summary: User logout
+ *     tags: [Users]
+ *     description: Log out user by removing their remember token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ */
+
+/**
+ * @swagger
+ * /users/reset-password:
+ *   post:
+ *     summary: Reset user password
+ *     tags: [Users]
+ *     description: Reset a user's password
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - newPassword
+ *             properties:
+ *               username:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ */
+
+/**
+ * @swagger
+ * /users/refresh-token:
+ *   post:
+ *     summary: Refresh user token
+ *     tags: [Users]
+ *     description: Generate new access token using refresh token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ */
+router.post('/refresh-token', userController.refreshTokenController);
+
+// Route untuk login (tidak memerlukan middleware)
 router.post('/login', userController.loginController);
+
+// Route untuk akses data user (menggunakan middleware)
+//router.get('/profile', authMiddleware, userController.profileController);
+
+// Logout
+router.post('/logout', userController.logoutController);
+
+// Reset password
+router.post('/reset-password', userController.resetPasswordController);
+
+
+router.get('/profile', authenticateToken, profileController);
 
 module.exports = router;

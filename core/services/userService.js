@@ -13,7 +13,7 @@ const getAllUsers = async () => {
         u.email,
         u.email_verified_at,
         u.password,
-        l.unit_layanan AS unit_layanan_id, -- Ambil nama layanan, tapi alias tetap unit_layanan_id
+        l.unit_layanan AS unit_layanan_id,
         u.foto,
         u.remember_token,
         u.created_at,
@@ -30,6 +30,7 @@ const getAllUsers = async () => {
     throw new Error('Error fetching users');
   }
 };
+
 
 // Fungsi untuk mendapatkan user berdasarkan username
 const getUserByUsername = async (username) => {
@@ -60,6 +61,7 @@ const createUser = async (userData) => {
     );
     return result.rows[0];
   } catch (err) {
+    console.error('DB Error:', err); // tambahkan ini
     throw new Error('Error creating user');
   }
 };
@@ -116,23 +118,77 @@ const updateRememberToken = async (userId, token) => {
       'UPDATE users SET remember_token = $1 WHERE id = $2 RETURNING *',
       [token, userId]
     );
+    console.log('Updating remember_token for ID:', userId, 'with token:', token);
     return result.rows[0];
   } catch (error) {
+    console.error('Error updating remember token:', error);  // Menambahkan log error untuk debugging
     throw new Error('Error updating remember token');
   }
 };
 
+
 // Fungsi untuk menghasilkan remember token
 const generateRememberToken = (user) => {
-  return jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign(
+    { id: user.id, username: user.username },  // <-- ini payloadnya
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: '7d' }
+  );
 };
+
+
+// Fungsi untuk menghasilkan access token
+const generateAccessToken = (user) => {
+  return jwt.sign(
+    { id: user.id, username: user.username },
+    process.env.ACCESS_TOKEN_SECRET,  // Mengambil nilai dari .env
+    { expiresIn: '15m' }  // Access token berlaku 15 menit
+  );
+};
+
+// Fungsi untuk menghasilkan refresh token
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user.id, username: user.username },
+    process.env.REFRESH_TOKEN_SECRET,  // Mengambil nilai dari .env
+    { algorithm: 'HS256', expiresIn: '7d' },
+    { expiresIn: '7d' }  // Refresh token berlaku 7 hari
+  );
+};
+
+const updatePassword = async (userId, newPassword) => {
+  try {
+    const result = await db.query(
+      `UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
+      [newPassword, userId]
+    );
+    return result.rows[0];
+  } catch (err) {
+    throw new Error('Error updating password');
+  }
+};
+
+// Fungsi untuk mendapatkan user berdasarkan ID
+const getUserById = async (id) => {
+  try {
+    const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+    return result.rows[0]; // Mengembalikan data user berdasarkan ID
+  } catch (err) {
+    throw new Error('Error fetching user by ID');
+  }
+};
+
 
 module.exports = {
   getAllUsers,
   getUserByUsername,
   createUser,
+  getUserById,  // <-- Add this line
   updateUser,
   verifyEmail,
   updateRememberToken,
   generateRememberToken,
+  generateAccessToken,
+  generateRefreshToken,
+  updatePassword,
 };
