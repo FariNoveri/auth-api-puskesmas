@@ -114,26 +114,44 @@ _Illyasviel sedang berpikir, tapi dia senang kamu tahu cara menggunakan Thunder 
 Berikut adalah penjelasan mengenai struktur folder dalam proyek ini:
 
 ```
+Made By Fari Noveri
+├── .env                   # File untuk variabel lingkungan (misalnya, database, JWT secrets)
+├── index.js               # Titik masuk utama untuk server API
+├── package.json           # Konfigurasi proyek, dependensi, dan skrip
+├── package-lock.json      # File pengunci dependensi
+├── README.md              # Dokumentasi proyek (file ini)
+├── server.js              # Pengaturan server alternatif (untuk konfigurasi yang berbeda)
+└── swagger.js             # File konfigurasi dokumentasi API menggunakan Swagger
+
 /config
-  ├── db.js         // Koneksi ke database PostgreSQL
-  └── puskesmas.sql  // Script SQL untuk setup database
+├── db.js                   # Pengaturan koneksi ke database PostgreSQL
+├── puskesmas.sql           # Skrip SQL untuk setup awal database
+├── puskesmas2.sql          # File SQL alternatif untuk setup
+└── puskesmas_fix_users.sql # Skrip untuk memperbaiki masalah dengan data pengguna
 
 /controllers
-  ├── gudangController.js    // Mengatur data gudang
-  └── userController.js      // Mengatur data pengguna
+├── gudangController.js      # Mengelola data gudang
+├── obatController.js        # Mengelola data obat
+└── userController.js        # Mengelola data pengguna (termasuk staf, dokter, pasien)
 
 /core
-  ├── services
-      └── userService.js     // Mengatur logika untuk pengguna
+└── services
+    └── userService.js       # Berisi logika untuk manajemen pengguna (misalnya, pembuatan, penghapusan)
 
 /middleware
-  ├── authenticateToken.js   // Middleware untuk autentikasi token
+├── authenticateToken.js     # Middleware untuk autentikasi token JWT di rute yang dilindungi
+└── authMiddleware.js        # Middleware untuk memastikan otorisasi pengguna yang valid
 
 /routes
-  ├── userRoutes.js          // Mengatur routing untuk API pengguna
+├── gudangRoutes.js          # Rute API terkait manajemen gudang
+├── obatRoutes.js            # Rute API untuk manajemen data obat
+├── orderRoutes.js           # Rute API untuk mengelola pesanan
+├── satuanObatRoutes.js      # Rute API untuk manajemen satuan obat
+├── unitLayananRoutes.js     # Rute API untuk manajemen layanan di Puskesmas
+└── userRoutes.js            # Rute API untuk manajemen data pengguna (staf, dokter, dll.)
 
 /utils
-  └── responseFormat.js      // Membantu format response API
+└── responseFormat.js       # Fungsi pembantu untuk memformat respons API
 
 ```
 
